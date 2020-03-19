@@ -1,0 +1,61 @@
+﻿<Window x:Class="Kalkulator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kalkulator"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="5*" />
+        </Grid.RowDefinitions>
+        
+        <TextBox  Grid.Row="0" x:Name="MemoryTextField" IsReadOnly="True" TextAlignment="Right" VerticalContentAlignment="Bottom"></TextBox>
+        <TextBox  Grid.Row="1" x:Name="CurrentNumberTextField" IsReadOnly="True" TextAlignment="Right" VerticalContentAlignment="Bottom"></TextBox>
+        <Grid Grid.Row="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Content="%" x:Name="b_00" Click="Function2_Click"/>
+            <Button Grid.Row="0" Grid.Column="1" Content="CE"  x:Name="b_01" Click="CE_Click"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="C"  x:Name="b_02" Click="C_Click"/>
+            <Button Grid.Row="0" Grid.Column="3" Content="DEL"  x:Name="b_03" Click="DEL_Click"/>
+            <Button Grid.Row="1" Grid.Column="0" Content="1/x"  x:Name="b_10" Click="Function1_Click"/>
+            <Button Grid.Row="1" Grid.Column="1" Content="x^2"  x:Name="b_11" Click="Function1_Click"/>
+            <Button Grid.Row="1" Grid.Column="2" Content="SQRT(x)"  x:Name="b_12" Click="Function1_Click"/>
+            <Button Grid.Row="1" Grid.Column="3" Content="/"  x:Name="b_13" Click="Function2_Click"/>
+            <Button Grid.Row="2" Grid.Column="0" Content="1" x:Name="b_20" Click="Numeric_Click"/>
+            <Button Grid.Row="2" Grid.Column="1" Content="2" x:Name="b_21" Click="Numeric_Click"/>
+            <Button Grid.Row="2" Grid.Column="2" Content="3" x:Name="b_22" Click="Numeric_Click"/>
+            <Button Grid.Row="2" Grid.Column="3" Content="*" x:Name="b_23" Click="Function2_Click"/>
+            <Button Grid.Row="3" Grid.Column="0" Content="4" x:Name="b_30" Click="Numeric_Click" />
+            <Button Grid.Row="3" Grid.Column="1" Content="5" x:Name="b_31" Click="Numeric_Click"/>
+            <Button Grid.Row="3" Grid.Column="2" Content="6" x:Name="b_32" Click="Numeric_Click"/>
+            <Button Grid.Row="3" Grid.Column="3" Content="-" x:Name="b_33" Click="Function2_Click"/>
+            <Button Grid.Row="4" Grid.Column="0" Content="7" x:Name="b_40" Click="Numeric_Click"/>
+            <Button Grid.Row="4" Grid.Column="1" Content="8" x:Name="b_41" Click="Numeric_Click"/>
+            <Button Grid.Row="4" Grid.Column="2" Content="9" x:Name="b_42" Click="Numeric_Click"/>
+            <Button Grid.Row="4" Grid.Column="3" Content="+" x:Name="b_43" Click="Function2_Click"/>
+            <Button Grid.Row="5" Grid.Column="0" Content="+/-" x:Name="b_50" Click="Plus_Minus_Click"/>
+            <Button Grid.Row="5" Grid.Column="1" Content="0" x:Name="b_51" Click="Zero_Click"/>
+            <Button Grid.Row="5" Grid.Column="2" Content="." x:Name="b_52" Click="Comma_Click"/>
+            <Button Grid.Row="5" Grid.Column="3" Content="=" x:Name="b_53" Click="Equals_Click"/>
+       
+    </Grid>
+    </Grid>
+
+</Window>
