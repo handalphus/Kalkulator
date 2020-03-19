@@ -25,6 +25,7 @@ namespace Kalkulator
             InitializeComponent();
         }
         private double x = 12.3;
+        //nowy komentarz
         private string[] Operations2 = new string[4] { "+", "-", "*", "/" };
         private bool IsLastButtonEq = false;
         private double Calculate(double x, string operation,double y)
