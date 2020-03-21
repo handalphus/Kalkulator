@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.RegularExpressions;
+using System.Globalization;
+using System.Threading;
+
 namespace Kalkulator
 {
     /// <summary>
@@ -22,64 +25,78 @@ namespace Kalkulator
     {
         public MainWindow()
         {
+            char DecimalSeparator = Convert.ToChar(Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+            //
             InitializeComponent();
+            b_52.Content = DecimalSeparator;
         }
-        private double x = 12.3;
-        //nowy komentarz
-        private string[] Operations2 = new string[4] { "+", "-", "*", "/" };
-        private bool IsLastButtonEq = false;
-        private double Calculate(double x, string operation,double y)
-        {
-            switch (operation)
-            {
-                case "+":
-                    return x + y;
-                case "-":
-                    return x - y;
-                case "*":
-                    return x * y;
-                case "/":
-                    return x / y;
-                default:
-                    return x % y;
-            }
-        }
+        //flagi do ochrony przed błędnymi obliczeniami
+        private bool IsLastButtonEquals = false;
+        private bool IsLastButton1ArgFunction = false;
+        //do globalizacji
+        char DecimalSeparator = Convert.ToChar(Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+        //pomocnicze metody do czyszczenia okien
         private void ClearMemoryTextField()
         {
-            if (IsLastButtonEq)
+            if (IsLastButtonEquals)
             {
                 MemoryTextField.Text = "";
-                IsLastButtonEq = false;
+                IsLastButtonEquals = false;
             }
             
         }
         private void ClearCurrentTextField()
         {
-            if (IsLastButtonEq)
+            if (IsLastButtonEquals)
             {
                 CurrentNumberTextField.Text = "";
                 
             }
 
         }
-        private void Numeric_Click(object sender, RoutedEventArgs e)
+        //metody do wpisywania liczb i symboli operacji do pól tekstowych
+        private void Write_Number(string number)
         {
-            ClearCurrentTextField();
-            ClearMemoryTextField();
-            Button button = (Button)sender;
-            CurrentNumberTextField.Text = CurrentNumberTextField.Text + button.Content;
-        }
-
-        private void Zero_Click(object sender, RoutedEventArgs e)
-        {
-            ClearCurrentTextField();
-            ClearMemoryTextField();
-            if (CurrentNumberTextField.Text!="0")
+            if (!IsLastButton1ArgFunction)
             {
-                Button button = (Button)sender;
-                CurrentNumberTextField.Text = CurrentNumberTextField.Text+ button.Content.ToString();
+                ClearCurrentTextField();
+                ClearMemoryTextField();
+                if (number != "0")
+                {
+                    CurrentNumberTextField.Text += number;
+                }
+                else if (CurrentNumberTextField.Text != "0")
+                {
+                    CurrentNumberTextField.Text += number;
+                }
             }
         }
+
+        private void Write_Operation(string operation)
+        {
+            if (Regex.Match(CurrentNumberTextField.Text, @"\d+$").Success)
+            {
+                ClearMemoryTextField();
+                
+                MemoryTextField.Text += $"{CurrentNumberTextField.Text} {operation} ";
+                CurrentNumberTextField.Text = "";
+                IsLastButton1ArgFunction = false;
+            }
+
+        }
+
+        //Metody do klikania na odpowiednie przyciski
+
+        private void Numeric_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button)sender;
+            
+                Write_Number(button.Content.ToString());
+            
+            
+        }
+
+       
 
         private void Plus_Minus_Click(object sender, RoutedEventArgs e)
         {
@@ -92,99 +109,61 @@ namespace Kalkulator
             {
                 CurrentNumberTextField.Text =  CurrentNumberTextField.Text.Substring(1);
             }
+            IsLastButton1ArgFunction = true;
         }
 
         private void Equals_Click(object sender, RoutedEventArgs e)
         {
             
-
-            if (MemoryTextField.Text != "" && CurrentNumberTextField.Text != "")
+           if (MemoryTextField.Text != "" && CurrentNumberTextField.Text != ""&&!IsLastButtonEquals)
             {
                 MemoryTextField.Text += CurrentNumberTextField.Text;
-                string[] values = MemoryTextField.Text.Split();
-                List<double> numbers = new List<double>();
-                List<string> operations = new List<string>();
-                for (int i = 0; i < values.Length; i+=2)
-                {
-                    numbers.Add(Convert.ToDouble(values[i]));
-                }
-                for (int i = 1; i < values.Length; i+=2)
-                {
-                    operations.Add(values[i]);
-                }
-                for (int i = 0; i < operations.Count; i++)
-                {
-                    numbers[i + 1] = Calculate(numbers[i], operations[i], numbers[i + 1]);
-                }
-                CurrentNumberTextField.Text = numbers[numbers.Count - 1].ToString();
-                IsLastButtonEq = true;
+                CurrentNumberTextField.Text = MathematicalBackground.PerformCalculations(MemoryTextField.Text).ToString();
+                IsLastButtonEquals = true;
                 
             }
         }
 
-        private void Function2_Click(object sender, RoutedEventArgs e)
+        private void Function_2_Arguments_Click(object sender, RoutedEventArgs e)
         {
-            ClearMemoryTextField();
+            
             Button button = (Button)sender;
-            MemoryTextField.Text += CurrentNumberTextField.Text + " " + button.Content + " " ;
-            CurrentNumberTextField.Text = "";
+            Write_Operation(button.Content.ToString());
+            return;
+            
         }
 
-        private void Function1_Click(object sender, RoutedEventArgs e)
+        private void Function_1_Argument_Click(object sender, RoutedEventArgs e)
         {
             ClearMemoryTextField();
             Button button = (Button)sender;
             string operation = button.Content.ToString();
-            Console.WriteLine(operation);
+            
             if (CurrentNumberTextField.Text != "")
             {
-                switch (operation)
-                {
-                    case "x^2":
-                        CurrentNumberTextField.Text = Math.Pow(Double.Parse(CurrentNumberTextField.Text), 2).ToString();
-                        break;
-                    case "1/x":
-                        double x = Double.Parse(CurrentNumberTextField.Text);
-                        //if (x==0)
-                        //{
-                        //    CurrentNumberTextField.Text = "Dzielenie przez 0!!";
-                        //}
-                        //else
-                        {
-                            CurrentNumberTextField.Text = (1 / x).ToString();
-                        }
-                        break;
-                    case "SQRT(x)":
-                        double y = Double.Parse(CurrentNumberTextField.Text);
-                        if (y >= 0)
-                        {
-                            CurrentNumberTextField.Text = Math.Sqrt(y).ToString();
-                        }
-                        else
-                        {
-                            CurrentNumberTextField.Text = "Niepoprawne wejście";
-                        }
-                        break;
-                    default:
-                        break;
-                }
+                CurrentNumberTextField.Text = MathematicalBackground.Perform1ArgumentFunction(CurrentNumberTextField.Text, operation).ToString();
+                IsLastButton1ArgFunction = true;
             }
         }
 
         private void CE_Click(object sender, RoutedEventArgs e)
         {
             CurrentNumberTextField.Text = "";
+            IsLastButton1ArgFunction = false;
         }
 
         private void C_Click(object sender, RoutedEventArgs e)
         {
             CurrentNumberTextField.Text = "";
             MemoryTextField.Text = "";
+            IsLastButtonEquals = false;
+            IsLastButton1ArgFunction = false;
         }
 
        
         private void DEL_Click(object sender, RoutedEventArgs e)
         {
+           
             string number = CurrentNumberTextField.Text;
             if (number.Length>1)
             {
@@ -205,9 +184,55 @@ namespace Kalkulator
                 string reg = $"{n}";
                 if (Regex.Match(CurrentNumberTextField.Text, @"\d{" + reg + "}").Success)
                 {
-                    CurrentNumberTextField.Text += ",";
+                    CurrentNumberTextField.Text += DecimalSeparator;
                 }
             }
+        }
+        //do obsługiwania klawiatury numerycznej
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key==Key.Decimal)
+            {
+                Comma_Click(sender, (RoutedEventArgs)e);
+                return;
+            }
+            else if (e.Key==Key.Add)
+            {
+                Write_Operation("+"); 
+                return;
+            }
+            else if (e.Key == Key.Subtract)
+            {
+                Write_Operation("-"); 
+                return;
+            }
+            else if (e.Key == Key.Multiply)
+            {
+                Write_Operation("*"); 
+                return;
+            }
+            else if (e.Key == Key.Divide)
+            {
+                Write_Operation("/"); 
+                return;
+            }
+            else if (e.Key == Key.Return)
+            {
+                Equals_Click(sender, (RoutedEventArgs)e); 
+                return;
+            }
+           
+            else if (e.Key>=Key.NumPad0&&e.Key<=Key.NumPad9)
+            {
+               Write_Number( (e.Key - Key.NumPad0).ToString());
+                
+            }
+            else if(e.Key >= Key.D0 && e.Key <= Key.D9)
+            {
+               Write_Number((e.Key - Key.D0).ToString());
+                
+            }
+            
         }
     }
 }
